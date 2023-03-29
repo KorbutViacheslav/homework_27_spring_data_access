@@ -2,6 +2,7 @@ package com.example.spring_data_access.dao;
 
 import com.example.spring_data_access.entity.Product;
 import com.example.spring_data_access.mappers.ProductMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -11,12 +12,13 @@ import java.util.List;
 public class ProductDaoImp {
     private final JdbcTemplate jdbcTemplate;
 
+    @Autowired
     public ProductDaoImp(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
     public void add(Product product) {
-        String sql = "INSERT INTO products (id, name, cost) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO products (id, name, price) VALUES (?, ?, ?)";
         jdbcTemplate.update(sql, product.getId(), product.getName(), product.getPrice());
     }
 
