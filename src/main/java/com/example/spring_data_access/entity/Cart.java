@@ -10,13 +10,9 @@ import java.util.List;
 
 
 @Data
-//@Entity
-@Table(name = "carts")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Cart {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToMany

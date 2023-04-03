@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class ProductDaoImp {
@@ -18,6 +19,7 @@ public class ProductDaoImp {
     }
 
     public void add(Product product) {
+        delete(product.getId());
         String sql = "INSERT INTO products (id, name, price) VALUES (?, ?, ?)";
         jdbcTemplate.update(sql, product.getId(), product.getName(), product.getPrice());
     }
