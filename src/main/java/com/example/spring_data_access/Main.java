@@ -9,22 +9,31 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
 
 public class Main {
     public static void main(String[] args) {
-        var context = new AnnotationConfigApplicationContext(JdbcConfig.class);
-        ProductDaoImp productDaoImp=context.getBean(ProductDaoImp.class);
-        CartDaoImp cartDaoImp=context.getBean(CartDaoImp.class);
-        Product cola=new Product(1L,"Cola",new BigDecimal(2));
-        Product beer=new Product(2L,"Beer",new BigDecimal(5));
-        productDaoImp.add(cola);
-        productDaoImp.add(beer);
-        System.out.println(productDaoImp.findAll());
-        List<Product> productList= Arrays.asList(cola,beer);
-        Cart cart=new Cart(1L,productList);
-        cartDaoImp.add(cart);
-        System.out.println(cartDaoImp.findById(1L));
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(JdbcConfig.class);
+
+        CartDaoImp cartDao = context.getBean(CartDaoImp.class);
+        ProductDaoImp productDao = context.getBean(ProductDaoImp.class);
+
+        Product beer = new Product(1L, "Beer", new BigDecimal(5));
+        Product cola = new Product(2L, "Cola", new BigDecimal(3));
+        Product water = new Product(3L, "Water", new BigDecimal(1));
+        productDao.save(beer);
+        productDao.save(cola);
+        productDao.save(water);
+        productDao.delete(1L);
+
+        Cart cart1 = new Cart(1L, new ArrayList<>());
+        Cart cart2 = new Cart(2L, new ArrayList<>());
+        cartDao.save(cart1);
+        cartDao.save(cart2);
+        cartDao.add(1L, 2L);
+        cartDao.add(2L, 2L);
+        cartDao.add(2L, 3L);
+        cartDao.delete(2L, 2L);
+
     }
 }

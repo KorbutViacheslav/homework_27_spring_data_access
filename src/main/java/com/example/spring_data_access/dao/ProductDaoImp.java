@@ -7,40 +7,32 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class ProductDaoImp {
-    private final JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
     @Autowired
     public ProductDaoImp(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public void add(Product product) {
-        delete(product.getId());
-        String sql = "INSERT INTO products (id, name, price) VALUES (?, ?, ?)";
-        jdbcTemplate.update(sql, product.getId(), product.getName(), product.getPrice());
+    public void save(Product product) {
+        jdbcTemplate.update("insert into products(product_name, product_price) values (?, ?)",
+                product.getName(), product.getPrice());
     }
 
     public void delete(Long id) {
-        String sql = "DELETE FROM products WHERE id=?";
-        jdbcTemplate.update(sql, id);
+        jdbcTemplate.update("delete from products where id = ?", id);
     }
 
-    public Product findById(Long id) {
-        String sql = "SELECT * FROM products WHERE id=?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{id}, new ProductMapper());
+    public Product getById(Long id) {
+        return jdbcTemplate.queryForObject("select * from products where id= ?",
+                new ProductMapper(), id);
     }
 
-    public List<Product> findAll() {
-        String sql = "SELECT * FROM products";
-        return jdbcTemplate.query(sql, new ProductMapper());
-    }
-
-    public List<Product> findAvailableProducts() {
-        String sql = "SELECT * FROM products WHERE available=true";
-        return jdbcTemplate.query(sql, new ProductMapper());
+    public List<Product> getAllProducts() {
+        return jdbcTemplate.query("select * from products",
+                new ProductMapper());
     }
 }

@@ -1,32 +1,43 @@
 package com.example.spring_data_access.dao;
 
 import com.example.spring_data_access.entity.Cart;
-import com.example.spring_data_access.mappers.CartMapper;
+import com.example.spring_data_access.entity.Product;
+import com.example.spring_data_access.mappers.ProductMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public class CartDaoImp {
-    private final JdbcTemplate jdbcTemplate;
-    private final CartMapper cartMapper;
+    private JdbcTemplate jdbcTemplate;
 
-    public CartDaoImp(JdbcTemplate jdbcTemplate, CartMapper cartMapper) {
+    @Autowired
+    public CartDaoImp(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        this.cartMapper = cartMapper;
     }
 
-    public void add(Cart cart) {
-        String sql = "INSERT INTO carts (id, products) VALUES (?, ?)";
-        jdbcTemplate.update(sql, cart.getId(), cart.getProducts().toString());
+    public void add(Long cartId, Long productId) {
+        String sql = "insert into carts_products(cart_id, product_id) values (?, ?)";
+        jdbcTemplate.update(sql, cartId, productId);
     }
 
-    public void deleteById(Long id) {
-        String sql = "DELETE FROM carts WHERE id = ?";
-        jdbcTemplate.update(sql, id);
+    public void delete(Long cartId, Long productId) {
+        String sql = "delete from carts_products where cart_id = ? AND product_id = ?";
+        jdbcTemplate.update(sql, cartId, productId);
     }
 
-    public Cart findById(Long id) {
-        String sql = "SELECT * FROM carts WHERE id = ?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{id}, cartMapper);
+    public Cart getById(Long id) {
+        String sql = "select * from carts, carts_products" +
+                     " where carts.id = carts_products.cart_id AND carts.id = ?";
+        List<Product> products = jdbcTemplate.query(sql, new ProductMapper(), new Object[]{id});
+        Cart cart = new Cart();
+        cart.setProducts(products);
+        return cart;
+    }
+
+    public void save(Cart cart) {
+        jdbcTemplate.update("insert into carts (id) VALUES (?)", cart.getId());
     }
 }
