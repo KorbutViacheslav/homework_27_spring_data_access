@@ -30,6 +30,7 @@ public class Main {
         Cart cart2 = new Cart(2L, new ArrayList<>());
         cartDao.save(cart1);
         cartDao.save(cart2);
+
         cartDao.add(1L, 2L);
         cartDao.add(2L, 2L);
         cartDao.add(2L, 3L);
